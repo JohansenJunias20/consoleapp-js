@@ -1,0 +1,20 @@
+{
+  "name": "consoleapp",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/socket.io-client": "^3.0.0",
+    "socket.io-client": "^4.6.1",
+    "wrtc": "^0.4.7"
+  },
+  "devDependencies": {
+    "@types/node": "^18.15.12"
+  }
+}
