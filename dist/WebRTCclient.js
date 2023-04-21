@@ -1,55 +1,48 @@
-import { Socket } from "socket.io-client";
+"use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
 const { RTCPeerConnection } = require("wrtc");
-
-
 class WebRTCClient {
-    public server: {
-        peer: RTCPeerConnection,
-        socketid?: string,
-        dcUnreliable?: RTCDataChannel,
-        dcReliable?: RTCDataChannel
-    }
-    private ws: Socket;
-    constructor(ws_socket: Socket) {
-        ws_socket.on("joinpeer", (socketid: string) => {
+    constructor(ws_socket) {
+        ws_socket.on("joinpeer", (socketid) => {
             this.onJoinPeer(socketid);
         });
         this.ws = ws_socket;
-
-
-
         this.ws.on("get:master_csharp", (socketid_server) => {
             this.server.socketid = socketid_server;
             this.startConnect();
-        })
-
-        const peer: RTCPeerConnection = new RTCPeerConnection({
-            iceServers:
-                [{ urls: "turn:skripsi.orbitskomputer.com:3478", username: "guest", credential: "welost123" },
+        });
+        const peer = new RTCPeerConnection({
+            iceServers: [{ urls: "turn:skripsi.orbitskomputer.com:3478", username: "guest", credential: "welost123" },
                 { urls: "stun:stun.l.google.com:19302" }
-                ]
+            ]
         });
         // peer.startConnect
         const ref = this;
         peer.ondatachannel = (e) => {
             // e.channel.
-           
             if (e.channel.label == "unreliable") {
                 ref.server.dcUnreliable = e.channel;
                 e.channel.onopen = (e) => {
                     // e.
                     console.log("data channel unreliable is open!");
-                }
+                };
                 e.channel.onmessage = (e) => {
-
                     if (ref.onRecieveUnreliable) {
                         // console.log("recieve msg from server via UNRELIABLE data channel:");
                         ref.onRecieveUnreliable(e.data);
                     }
-
-                }
+                };
             }
-            else  if (e.channel.label == "reliable") {
+            else if (e.channel.label == "reliable") {
                 // e.channel.send
                 ref.server.dcReliable = e.channel;
                 e.channel.onopen = () => {
@@ -61,38 +54,32 @@ class WebRTCClient {
                         if (ref.onRecieveReliable) {
                             ref.onRecieveReliable(e.data);
                         }
-                        else{
+                        else {
                             console.log("onRecieveReliable not found!");
                         }
-                    }
-                }
-              
+                    };
+                };
             }
-        }
-        this.ws.on("offer", async (data) => {
+        };
+        this.ws.on("offer", (data) => __awaiter(this, void 0, void 0, function* () {
             console.log("recieve offer!");
             peer.setRemoteDescription(data.sdp);
-            var answer = await peer.createAnswer()
+            var answer = yield peer.createAnswer();
             peer.setLocalDescription(answer);
             console.log("answering..");
             this.ws.emit("answer", ({ sdp: peer.localDescription, type: 0, socketid: this.server.socketid }));
-        })
-
+        }));
         this.ws.on("icecandidate", ({ candidate }) => {
             console.log("recieve ice candidate from server!");
             // console.log({ candidate })
-            if (!candidate) return;
+            if (!candidate)
+                return;
             peer.addIceCandidate(candidate);
-        })
-
-
+        });
         peer.onicecandidate = ({ candidate }) => {
             console.log("sending.. ice candidate");
-            this.ws.emit("icecandidate", ({ socketid: this.ws.id, candidate, sdpindex: 0, sdpmid: 0 }))
-        }
-
-
-
+            this.ws.emit("icecandidate", ({ socketid: this.ws.id, candidate, sdpindex: 0, sdpmid: 0 }));
+        };
         // var dcUnreliable = peer.createDataChannel("unreliable", { ordered: false, maxRetransmits: 0 });
         // dcUnreliable.onopen = (e) => {
         //     console.log("data channel unreliable is open!");
@@ -104,41 +91,37 @@ class WebRTCClient {
         this.server = {
             peer,
             socketid: "",
-        }
+        };
         // this.peers[socketid] = peer;
         this.ws.emit("get:master_csharp", "");
-
     }
-    public onRecieveReliable?: (data: Buffer) => void;
-    public onRecieveUnreliable?: (data: Buffer) => void;
-    private startConnect() {
+    startConnect() {
         // throw new Error("Method not implemented.");
         // this.server.peer.onicecandidate = (candidate) => {
         //     this.ws.emit("icecandidate", ({ socketid: this.server.socketid, candidate, sdpmid: 0, sdpindex: 0 }));
         // }
         this.ws.emit("joinpeer", "");
     }
-    private onJoinPeer(socketid: string) {
+    onJoinPeer(socketid) {
         // if (this.peers[socketid]) {
         //     return; //sudah ada
         // }
     }
-    public sendUnreliable(data: Buffer) {
+    sendUnreliable(data) {
         if (this.server.dcUnreliable) {
             this.server.dcUnreliable.send(data.toString());
         }
         else {
-            console.log("dcUnReliable not available")
+            console.log("dcUnReliable not available");
         }
     }
-    public sendReliable(data: Buffer) {
+    sendReliable(data) {
         if (this.server.dcReliable) {
             this.server.dcReliable.send(data.toString());
         }
         else {
-            console.log("dcReliable not available")
+            console.log("dcReliable not available");
         }
     }
-
 }
-export default WebRTCClient;
+exports.default = WebRTCClient;
