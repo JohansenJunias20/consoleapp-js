@@ -21,7 +21,7 @@ class WebRTCClient {
             this.startConnect();
         });
         const peer = new RTCPeerConnection({
-            iceServers: [{ urls: "turn:skripsi.orbitskomputer.com:3478", username: "guest", credential: "welost123" },
+            iceServers: [{ urls: "turn:skripsi.orbitskomputer.com:3478", username: "guest", credential: "welost123", user: "guest" },
                 { urls: "stun:stun.l.google.com:19302" }
             ]
         });

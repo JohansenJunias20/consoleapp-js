@@ -25,7 +25,7 @@ class WebRTCClient {
 
         const peer: RTCPeerConnection = new RTCPeerConnection({
             iceServers:
-                [{ urls: "turn:skripsi.orbitskomputer.com:3478", username: "guest", credential: "welost123" },
+                [{ urls: "turn:skripsi.orbitskomputer.com:3478", username: "guest", credential: "welost123", user: "guest" },
                 { urls: "stun:stun.l.google.com:19302" }
                 ]
         });
@@ -33,7 +33,7 @@ class WebRTCClient {
         const ref = this;
         peer.ondatachannel = (e) => {
             // e.channel.
-           
+
             if (e.channel.label == "unreliable") {
                 ref.server.dcUnreliable = e.channel;
                 e.channel.onopen = (e) => {
@@ -49,7 +49,7 @@ class WebRTCClient {
 
                 }
             }
-            else  if (e.channel.label == "reliable") {
+            else if (e.channel.label == "reliable") {
                 // e.channel.send
                 ref.server.dcReliable = e.channel;
                 e.channel.onopen = () => {
@@ -61,12 +61,12 @@ class WebRTCClient {
                         if (ref.onRecieveReliable) {
                             ref.onRecieveReliable(e.data);
                         }
-                        else{
+                        else {
                             console.log("onRecieveReliable not found!");
                         }
                     }
                 }
-              
+
             }
         }
         this.ws.on("offer", async (data) => {

@@ -30,12 +30,16 @@ class WebRTCServer {
         }
         console.log("peer joined with: " + socketid);
         console.log("my socket id is: " + this.ws.id);
+        
         const peer: RTCPeerConnection = new RTCPeerConnection({
             iceServers:
-                [{ urls: "turn:skripsi.orbitskomputer.com:3478", username: "guest", credential: "welost123" },
+                [{ urls: "turn:skripsi.orbitskomputer.com:3478", username: "guest", credential: "welost123", user:"guest"},
                 { urls: "stun:stun.l.google.com:19302" }
                 ]
         });
+        peer.onicecandidateerror = (e)=>{
+            console.log("error ice candidate!");
+        }
         peer.onicecandidate = ({ candidate }) => {
             console.log("sending ice candidate to client")
             this.ws.emit("icecandidate", ({ socketid: socketid, candidate, sdpindex: 0, sdpmid: 0 }))
