@@ -19,7 +19,8 @@ class WebRTCServer {
             console.log("recieve ice candidate from clients");
             if (!candidate)
                 return;
-            console.log({ candidate });
+            // console.log({ candidate })
+            console.log({ rtc: this.peers[socketid].rtc });
             this.peers[socketid].rtc.addIceCandidate(candidate).then(e => {
                 console.log("success add candidate");
             }).catch((e) => {
@@ -29,7 +30,7 @@ class WebRTCServer {
         ws_socket.on("answer", ({ sdp, socketid }) => {
             console.log("recieve answer.");
             this.peers[socketid].rtc.setRemoteDescription(sdp);
-            console.log({ peers: this.peers[socketid] });
+            // console.log({ peers: this.peers[socketid] });
             setInterval(() => {
                 // console.log("test send reliable")
                 console.log({ state: this.peers[socketid].dcReliable.readyState });

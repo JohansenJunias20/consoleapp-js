@@ -92,7 +92,7 @@ class WebRTCClient {
 
         peer.onicecandidate = ({ candidate }) => {
             console.log("sending.. ice candidate");
-            this.ws.emit("icecandidate", ({ socketid: this.ws.id, candidate, sdpindex: 0, sdpmid: 0 }))
+            this.ws.emit("icecandidate", ({ socketid: this.server.socketid, candidate, sdpindex: 0, sdpmid: 0 }))
         }
 
 

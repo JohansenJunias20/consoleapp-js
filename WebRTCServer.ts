@@ -14,22 +14,23 @@ class WebRTCServer {
         ws_socket.on("icecandidate", ({ candidate, socketid }) => {
             console.log("recieve ice candidate from clients");
             if (!candidate) return;
-            console.log({ candidate })
-            this.peers[socketid].rtc.addIceCandidate(candidate).then(e=>{
+            // console.log({ candidate })
+            console.log({ rtc: this.peers[socketid].rtc })
+            this.peers[socketid].rtc.addIceCandidate(candidate).then(e => {
                 console.log("success add candidate")
-            }).catch((e)=>{
+            }).catch((e) => {
                 console.log("failed add ice candidate");
             });
         })
         ws_socket.on("answer", ({ sdp, socketid }) => {
             console.log("recieve answer.");
             this.peers[socketid].rtc.setRemoteDescription(sdp);
-            console.log({peers:this.peers[socketid]});
-            setInterval(()=>{
+            // console.log({ peers: this.peers[socketid] });
+            setInterval(() => {
                 // console.log("test send reliable")
-                console.log({state:this.peers[socketid].dcReliable.readyState});
+                console.log({ state: this.peers[socketid].dcReliable.readyState });
                 // this.peers[socketid].dcReliable.send("testing");
-            },5000);
+            }, 5000);
         });
         this.ws = ws_socket;
         this.peers = {}
@@ -40,14 +41,14 @@ class WebRTCServer {
         }
         console.log("peer joined with: " + socketid);
         console.log("my socket id is: " + this.ws.id);
-        
+
         const peer: RTCPeerConnection = new RTCPeerConnection({
             iceServers:
-                [{ urls: "turn:skripsi.orbitskomputer.com:3478", username: "guest", credential: "welost123", user:"guest"},
+                [{ urls: "turn:skripsi.orbitskomputer.com:3478", username: "guest", credential: "welost123", user: "guest" },
                 { urls: "stun:stun.l.google.com:19302" }
                 ]
         });
-        peer.onicecandidateerror = (e)=>{
+        peer.onicecandidateerror = (e) => {
             // console.log({e})
             // console.log("error ice candidate!");
         }
@@ -72,7 +73,7 @@ class WebRTCServer {
             // },1/30)
 
         }
-        dcReliable.onerror = (e)=>{
+        dcReliable.onerror = (e) => {
             console.log("dc reliable error");
         }
 
