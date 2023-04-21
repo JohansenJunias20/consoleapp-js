@@ -36,10 +36,18 @@ class WebRTCServer {
         }
         console.log("peer joined with: " + socketid);
         console.log("my socket id is: " + this.ws.id);
+        var args = process.argv.slice(2);
 
+        args.forEach(function (val, index, array) {
+            console.log(index + ': ' + val);
+        });
+        var domain_turn = "skripsi.orbitskomputer.com"
+        if (args.length != 0)
+            domain_turn = process.argv[0] == "SGP" ? "skripsi.orbitskomputer.com" : "skripsi-japan.orbitskomputer.com"
+        console.log({ domain_turn })
         const peer: RTCPeerConnection = new RTCPeerConnection({
             iceServers:
-                [{ urls: "turn:skripsi.orbitskomputer.com:3478", username: "guest", credential: "welost123", user: "guest" },
+                [{ urls: `turn:${domain_turn}:3478`, username: "guest", credential: "welost123", user: "guest" },
                 { urls: "stun:stun.l.google.com:19302" }
                 ]
         });
@@ -97,7 +105,11 @@ class WebRTCServer {
             // dcUnreliable.send(e
             // console.log({ data });
             // dcUnreliable.send({ type: "latency", });
-            // this.broadcast_unreliable(data, socketid);
+            var jsonData = JSON.parse(data);
+            if (jsonData.to == "all") {
+                this.broadcast_unreliable(data, socketid);
+                // return;
+            }
             if (this.recieveUnreliable)
                 this.recieveUnreliable(data);
 
@@ -109,12 +121,16 @@ class WebRTCServer {
             dcUnreliable
         }
     }
-    public broadcast_unreliable(data: Buffer, socketid: string) {
+    public async broadcast_unreliable(data: Buffer, socketid: string) {
         for (var key in this.peers) {
             if (key == socketid && socketid != "-1") continue;
             var peer = this.peers[key];
-            if (peer.dcUnreliable.readyState == "open")
+            if (peer.dcUnreliable.readyState == "open") {
+
                 peer.dcUnreliable.send(data.toString());
+                // await peer.dcUnreliable._RTCDataChannel__transport._data_channel_flush()
+                // await peer.dcUnreliable._RTCDataChannel__transport._transmit()
+            }
         }
     };
     public broadcast_reliable(data: Buffer, socketid: string) {

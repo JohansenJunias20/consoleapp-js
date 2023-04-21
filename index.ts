@@ -138,6 +138,8 @@ TCPserver.on('connection', function (sock) {
             return;
         }
         if (ROLE == "server") {
+            console.log("recieve tcp from game:");
+            console.log({data:data.toString()})
             rtcServer.broadcast_reliable(data, "-1");
         }
         else if (ROLE == "client") {
@@ -163,7 +165,7 @@ UDPserver.on('message', function (msg, info) {
             // console.log({data})
             if (data.channel == "reply_latency") {
                 if (rtcServer.peers[data.socketid].dcUnreliable){
-                    console.log("reply latency");
+                    // console.log("reply latency");
                     rtcServer.peers[data.socketid].dcUnreliable.send(data);
                     return;
                 }

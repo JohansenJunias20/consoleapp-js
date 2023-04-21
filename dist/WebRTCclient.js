@@ -20,8 +20,13 @@ class WebRTCClient {
             this.server.socketid = socketid_server;
             this.startConnect();
         });
+        var domain_turn = "skripsi.orbitskomputer.com";
+        var args = process.argv.slice(2);
+        if (args.length != 0)
+            domain_turn = args[0] == "SGP" ? "skripsi.orbitskomputer.com" : "skripsi-japan.orbitskomputer.com";
+        console.log({ domain_turn });
         const peer = new RTCPeerConnection({
-            iceServers: [{ urls: "turn:skripsi.orbitskomputer.com:3478", username: "guest", credential: "welost123", user: "guest" },
+            iceServers: [{ urls: `turn:${domain_turn}:3478`, username: "guest", credential: "welost123", user: "guest" },
                 { urls: "stun:stun.l.google.com:19302" }
             ]
         });
@@ -116,14 +121,18 @@ class WebRTCClient {
         // }
     }
     sendUnreliable(data) {
-        if (this.server.dcUnreliable) {
-            // var rData = { timestamp: Date.now(), data };
-            // console.log("send unreliable to server");
-            this.server.dcUnreliable.send(data.toString());
-        }
-        else {
-            console.log("dcUnReliable not available");
-        }
+        return __awaiter(this, void 0, void 0, function* () {
+            if (this.server.dcUnreliable) {
+                // var rData = { timestamp: Date.now(), data };
+                // console.log("send unreliable to server");
+                this.server.dcUnreliable.send(data.toString());
+                // await this.server.dcUnreliable._RTCDataChannel__transport._data_channel_flush()
+                // await this.server.dcUnreliable._RTCDataChannel__transport._transmit()
+            }
+            else {
+                console.log("dcUnReliable not available");
+            }
+        });
     }
     sendReliable(data) {
         if (this.server.dcReliable) {
