@@ -31,8 +31,11 @@ class WebRTCClient {
             // e.channel.
             if (e.channel.label == "unreliable") {
                 ref.server.dcUnreliable = e.channel;
-                e.channel.onopen = (e) => {
+                e.channel.onopen = (_) => {
                     // e.
+                    // setInterval(()=>{
+                    //     e.channel.send(Buffer.from("hello","utf-8"));
+                    // },2000);
                     console.log("data channel unreliable is open!");
                 };
                 e.channel.onmessage = (e) => {
@@ -114,6 +117,8 @@ class WebRTCClient {
     }
     sendUnreliable(data) {
         if (this.server.dcUnreliable) {
+            // var rData = { timestamp: Date.now(), data };
+            // console.log("send unreliable to server");
             this.server.dcUnreliable.send(data.toString());
         }
         else {

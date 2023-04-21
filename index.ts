@@ -157,6 +157,21 @@ UDPserver.on('message', function (msg, info) {
     // console.log('Data received from client : ' + msg.toString());
     // console.log('Received %d bytes from %s:%d\n', msg.length, info.address, info.port);
     if (ROLE == "server") {
+        try {
+
+            var data = JSON.parse(msg.toString());
+            // console.log({data})
+            if (data.channel == "reply_latency") {
+                if (rtcServer.peers[data.socketid].dcUnreliable){
+                    console.log("reply latency");
+                    rtcServer.peers[data.socketid].dcUnreliable.send(data);
+                    return;
+                }
+            }
+        }
+        catch (ex) {
+
+        }
         rtcServer.broadcast_unreliable(msg, "-1");
     }
     else if (ROLE == "client") {

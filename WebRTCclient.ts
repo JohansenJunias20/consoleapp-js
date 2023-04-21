@@ -36,8 +36,11 @@ class WebRTCClient {
 
             if (e.channel.label == "unreliable") {
                 ref.server.dcUnreliable = e.channel;
-                e.channel.onopen = (e) => {
+                e.channel.onopen = (_) => {
                     // e.
+                    // setInterval(()=>{
+                    //     e.channel.send(Buffer.from("hello","utf-8"));
+                    // },2000);
                     console.log("data channel unreliable is open!");
                 }
                 e.channel.onmessage = (e) => {
@@ -82,9 +85,9 @@ class WebRTCClient {
             console.log("recieve ice candidate from server!");
             // console.log({ candidate })
             if (!candidate) return;
-            peer.addIceCandidate(candidate).then(e=>{
+            peer.addIceCandidate(candidate).then(e => {
                 console.log("success add candidate")
-            }).catch((e)=>{
+            }).catch((e) => {
                 console.log("failed add ice candidate");
             });;
         })
@@ -129,6 +132,8 @@ class WebRTCClient {
     }
     public sendUnreliable(data: Buffer) {
         if (this.server.dcUnreliable) {
+            // var rData = { timestamp: Date.now(), data };
+            // console.log("send unreliable to server");
             this.server.dcUnreliable.send(data.toString());
         }
         else {

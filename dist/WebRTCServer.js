@@ -31,11 +31,6 @@ class WebRTCServer {
             console.log("recieve answer.");
             this.peers[socketid].rtc.setRemoteDescription(sdp);
             // console.log({ peers: this.peers[socketid] });
-            setInterval(() => {
-                // console.log("test send reliable")
-                console.log({ state: this.peers[socketid].dcReliable.readyState });
-                // this.peers[socketid].dcReliable.send("testing");
-            }, 5000);
         });
         this.ws = ws_socket;
         this.peers = {};
@@ -96,7 +91,10 @@ class WebRTCServer {
         };
         dcUnreliable.onmessage = (e) => {
             var data = e.data;
-            this.broadcast_unreliable(data, socketid);
+            // dcUnreliable.send(e
+            // console.log({ data });
+            // dcUnreliable.send({ type: "latency", });
+            // this.broadcast_unreliable(data, socketid);
             if (this.recieveUnreliable)
                 this.recieveUnreliable(data);
         };
