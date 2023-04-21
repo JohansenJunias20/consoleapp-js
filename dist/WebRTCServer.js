@@ -20,11 +20,21 @@ class WebRTCServer {
             if (!candidate)
                 return;
             console.log({ candidate });
-            this.peers[socketid].rtc.addIceCandidate(candidate);
+            this.peers[socketid].rtc.addIceCandidate(candidate).then(e => {
+                console.log("success add candidate");
+            }).catch((e) => {
+                console.log("failed add ice candidate");
+            });
         });
         ws_socket.on("answer", ({ sdp, socketid }) => {
             console.log("recieve answer.");
             this.peers[socketid].rtc.setRemoteDescription(sdp);
+            console.log({ peers: this.peers[socketid] });
+            setInterval(() => {
+                // console.log("test send reliable")
+                console.log({ state: this.peers[socketid].dcReliable.readyState });
+                // this.peers[socketid].dcReliable.send("testing");
+            }, 5000);
         });
         this.ws = ws_socket;
         this.peers = {};
@@ -41,7 +51,8 @@ class WebRTCServer {
             ]
         });
         peer.onicecandidateerror = (e) => {
-            console.log("error ice candidate!");
+            // console.log({e})
+            // console.log("error ice candidate!");
         };
         peer.onicecandidate = ({ candidate }) => {
             console.log("sending ice candidate to client");
@@ -61,6 +72,9 @@ class WebRTCServer {
             // setInterval(() => {
             //     ref.broadcast_reliable(Buffer.from("test", "utf-8"), "-1");
             // },1/30)
+        };
+        dcReliable.onerror = (e) => {
+            console.log("dc reliable error");
         };
         dcReliable.onclose = () => {
             console.log("dc reliable is closed!");

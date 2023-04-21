@@ -82,7 +82,11 @@ class WebRTCClient {
             console.log("recieve ice candidate from server!");
             // console.log({ candidate })
             if (!candidate) return;
-            peer.addIceCandidate(candidate);
+            peer.addIceCandidate(candidate).then(e=>{
+                console.log("success add candidate")
+            }).catch((e)=>{
+                console.log("failed add ice candidate");
+            });;
         })
 
 

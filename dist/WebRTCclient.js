@@ -74,7 +74,12 @@ class WebRTCClient {
             // console.log({ candidate })
             if (!candidate)
                 return;
-            peer.addIceCandidate(candidate);
+            peer.addIceCandidate(candidate).then(e => {
+                console.log("success add candidate");
+            }).catch((e) => {
+                console.log("failed add ice candidate");
+            });
+            ;
         });
         peer.onicecandidate = ({ candidate }) => {
             console.log("sending.. ice candidate");
