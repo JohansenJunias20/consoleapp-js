@@ -53,7 +53,7 @@ function checkPorts(port) {
         });
     });
 }
-// checkPorts(3003);
+checkPorts(3003);
 var ROLE = "";
 const socket_io_client_1 = __importDefault(require("socket.io-client"));
 const WebRTCServer_1 = __importDefault(require("./WebRTCServer"));
