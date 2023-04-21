@@ -41,7 +41,7 @@ async function checkPorts(port: number) {
 
 
 }
-checkPorts(3003);
+// checkPorts(3003);
 
 var ROLE = "";
 import io from "socket.io-client";
