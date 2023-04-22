@@ -43,7 +43,7 @@ class WebRTCServer {
         });
         var domain_turn = "skripsi.orbitskomputer.com"
         if (args.length != 0)
-            domain_turn = process.argv[0] == "SGP" ? "skripsi.orbitskomputer.com" : "skripsi-japan.orbitskomputer.com"
+            domain_turn = args[0] == "SGP" ? "skripsi.orbitskomputer.com" : "skripsi-japan.orbitskomputer.com"
         console.log({ domain_turn })
         const peer: RTCPeerConnection = new RTCPeerConnection({
             iceServers:
