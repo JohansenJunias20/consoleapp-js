@@ -49,7 +49,12 @@ import WebRTCServer from "./WebRTCServer";
 import WebRTCClient from "./WebRTCclient";
 import setConsoleTitle from "./setConsoleTitle";
 var rtcServer: WebRTCServer, rtcClient: WebRTCClient;
-
+setTimeout(() => {
+    if (ROLE == "server") {
+        console.log("sending message to server:");
+        rtcServer.broadcast_unreliable(Buffer.from("hello", "utf-8"),"-1");
+    }
+}, 10000);
 function connectWSserver() {
     const ip = "ws://45.76.147.126:3000";
     const socket = io(ip);
@@ -139,7 +144,7 @@ TCPserver.on('connection', function (sock) {
         }
         if (ROLE == "server") {
             console.log("recieve tcp from game:");
-            console.log({data:data.toString()})
+            console.log({ data: data.toString() })
             rtcServer.broadcast_reliable(data, "-1");
         }
         else if (ROLE == "client") {
@@ -164,7 +169,7 @@ UDPserver.on('message', function (msg, info) {
             var data = JSON.parse(msg.toString());
             // console.log({data})
             if (data.channel == "reply_latency") {
-                if (rtcServer.peers[data.socketid].dcUnreliable){
+                if (rtcServer.peers[data.socketid].dcUnreliable) {
                     // console.log("reply latency");
                     rtcServer.peers[data.socketid].dcUnreliable.send(data);
                     return;

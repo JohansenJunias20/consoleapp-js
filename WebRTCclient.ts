@@ -48,7 +48,7 @@ class WebRTCClient {
                     console.log("data channel unreliable is open!");
                 }
                 e.channel.onmessage = (e) => {
-
+                    console.log("recieve unreliable message:",e.data.toString())
                     if (ref.onRecieveUnreliable) {
                         // console.log("recieve msg from server via UNRELIABLE data channel:");
                         ref.onRecieveUnreliable(e.data);

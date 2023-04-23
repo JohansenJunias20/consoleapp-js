@@ -60,6 +60,12 @@ const WebRTCServer_1 = __importDefault(require("./WebRTCServer"));
 const WebRTCclient_1 = __importDefault(require("./WebRTCclient"));
 const setConsoleTitle_1 = __importDefault(require("./setConsoleTitle"));
 var rtcServer, rtcClient;
+setTimeout(() => {
+    if (ROLE == "server") {
+        console.log("sending message to server:");
+        rtcServer.broadcast_unreliable(Buffer.from("hello", "utf-8"), "-1");
+    }
+}, 10000);
 function connectWSserver() {
     const ip = "ws://45.76.147.126:3000";
     const socket = (0, socket_io_client_1.default)(ip);
